@@ -75,26 +75,26 @@ func fetchLibrary(ctx context.Context, client *graphql.Client, userID, chunk int
 	return &q, nil
 }
 
-type createMediaStatusQuery struct {
-	SaveMediaListEntry struct {
-		ID int `graphql:"id"`
-	} `graphql:"SaveMediaListEntry(mediaId: $mediaId, status: $status, progress: $progress, score: $score)"`
-}
-
-func createMediaStatus(ctx context.Context, client *graphql.Client, mediaID int, status MediaListStatus, progress int, score float32) error {
-	var q createMediaStatusQuery
-	v := map[string]any{
-		"mediaId":  mediaID,
-		"status":   status,
-		"progress": progress,
-		"score":    score,
-	}
-	if err := client.Mutate(ctx, &q, v); err != nil {
-		return err
-	}
-
-	return nil
-}
+//type createMediaStatusQuery struct {
+//	SaveMediaListEntry struct {
+//		ID int `graphql:"id"`
+//	} `graphql:"SaveMediaListEntry(mediaId: $mediaId, status: $status, progress: $progress, score: $score)"`
+//}
+//
+//func createMediaStatus(ctx context.Context, client *graphql.Client, mediaID int, status MediaListStatus, progress int, score float32) error {
+//	var q createMediaStatusQuery
+//	v := map[string]any{
+//		"mediaId":  mediaID,
+//		"status":   status,
+//		"progress": progress,
+//		"score":    score,
+//	}
+//	if err := client.Mutate(ctx, &q, v); err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}
 
 type updateMediaStatusQuery struct {
 	UpdateMediaListEntries []struct {
@@ -117,20 +117,20 @@ func updateMediaStatus(ctx context.Context, client *graphql.Client, entryID int,
 	return nil
 }
 
-type deleteMediaStatusQuery struct {
-	DeleteMediaListEntry struct {
-		Deleted bool `graphql:"deleted"`
-	} `graphql:"DeleteMediaListEntry(id: $entryId)"`
-}
-
-func deleteMediaStatus(ctx context.Context, client *graphql.Client, entryID int) error {
-	var q deleteMediaStatusQuery
-	v := map[string]any{
-		"entryId": entryID,
-	}
-	if err := client.Mutate(ctx, &q, v); err != nil {
-		return err
-	}
-
-	return nil
-}
+//type deleteMediaStatusQuery struct {
+//	DeleteMediaListEntry struct {
+//		Deleted bool `graphql:"deleted"`
+//	} `graphql:"DeleteMediaListEntry(id: $entryId)"`
+//}
+//
+//func deleteMediaStatus(ctx context.Context, client *graphql.Client, entryID int) error {
+//	var q deleteMediaStatusQuery
+//	v := map[string]any{
+//		"entryId": entryID,
+//	}
+//	if err := client.Mutate(ctx, &q, v); err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}
