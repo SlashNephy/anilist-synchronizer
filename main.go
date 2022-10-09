@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"github.com/hasura/go-graphql-client"
-	"golang.org/x/sync/errgroup"
 	"log"
 	"sync"
 	"time"
+
+	"github.com/hasura/go-graphql-client"
+	"golang.org/x/sync/errgroup"
 )
 
 func main() {
@@ -58,17 +59,26 @@ func main() {
 
 // Source と Target の差分を探して更新する
 func update(ctx context.Context, source []libraryEntry, target []libraryEntry, targetClient *graphql.Client) error {
+	// Source と Target で共通 Entry を探す
 	for _, se := range source {
 		for _, te := range target {
 			if se.Media.ID == te.Media.ID {
+				var update = false
 				if se.Status != te.Status {
+					update = true
 					log.Printf("Found diff in status: %s (%s -> %s)\n", se.Media.Title.Native, se.Status, te.Status)
 				}
 				if se.Progress != te.Progress {
+					update = true
 					log.Printf("Found diff in progress: %s (%d -> %d)\n", se.Media.Title.Native, se.Progress, te.Progress)
 				}
 				if se.Score != te.Score {
+					update = true
 					log.Printf("Found diff in score: %s (%f -> %f)\n", se.Media.Title.Native, se.Score, te.Score)
+				}
+
+				if !update {
+					continue
 				}
 
 				if err := updateMediaStatus(ctx, targetClient, te.ID, se.Status, se.Progress, se.Score); err != nil {
