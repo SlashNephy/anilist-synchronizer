@@ -1,5 +1,5 @@
 build:
-	go build ./*.go
+	go build -o anilist-synchronizer ./*.go
 
 run:
 	go run ./*.go
