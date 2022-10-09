@@ -86,7 +86,7 @@ func update(ctx context.Context, source []libraryEntry, target []libraryEntry, t
 				}
 
 				log.Printf("Updated: %s\n", se.Media.Title.Native)
-				time.Sleep(500 * time.Millisecond)
+				time.Sleep(300 * time.Millisecond)
 			}
 		}
 	}
