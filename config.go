@@ -11,6 +11,7 @@ import (
 type config struct {
 	AniListClientID     string `env:"ANILIST_CLIENT_ID,required"`
 	AniListClientSecret string `env:"ANILIST_CLIENT_SECRET,required"`
+	TokenDirectory      string `env:"TOKEN_DIRECTORY" envDefault:"."`
 }
 
 func loadConfig() (*config, error) {
@@ -24,10 +25,10 @@ func loadConfig() (*config, error) {
 		}
 	}
 
-	config := &config{}
-	if err := env.Parse(config); err != nil {
+	cfg := &config{}
+	if err := env.Parse(cfg); err != nil {
 		return nil, err
 	}
 
-	return config, nil
+	return cfg, nil
 }

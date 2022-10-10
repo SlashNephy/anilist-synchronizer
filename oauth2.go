@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/goccy/go-json"
 	"github.com/labstack/gommon/random"
@@ -56,8 +57,8 @@ func storeToken(token *oauth2.Token, filename string) error {
 	return nil
 }
 
-func loadToken(filename string) (*oauth2.Token, error) {
-	tokenJson, err := os.ReadFile(filename)
+func loadToken(path string) (*oauth2.Token, error) {
+	tokenJson, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -72,9 +73,10 @@ func loadToken(filename string) (*oauth2.Token, error) {
 
 func getOAuth2Client(ctx context.Context, config *config, tokenFile string) (*http.Client, error) {
 	oauth := getOAuth2Config(config)
+	path := filepath.Join(config.TokenDirectory, tokenFile)
 
 	var token *oauth2.Token
-	if _, err := os.Stat(tokenFile); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
 		token, err = acquireToken(ctx, oauth)
 		if err != nil {
 			return nil, err
@@ -84,7 +86,7 @@ func getOAuth2Client(ctx context.Context, config *config, tokenFile string) (*ht
 			return nil, err
 		}
 	} else {
-		token, err = loadToken(tokenFile)
+		token, err = loadToken(path)
 		if err != nil {
 			return nil, err
 		}
