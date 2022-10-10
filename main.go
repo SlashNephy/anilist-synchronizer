@@ -29,12 +29,6 @@ func main() {
 	}
 	log.Printf("Source User = %s (%d)\n", sourceViewer.Viewer.Name, sourceViewer.Viewer.ID)
 
-	sourceEntries, err := fetchAllEntries(ctx, sourceClient, sourceViewer.Viewer.ID)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("Source User has %d entries\n", len(sourceEntries))
-
 	targetClient, err := getGraphQLClient(ctx, cfg, "token-target.json")
 	if err != nil {
 		log.Fatal(err)
@@ -46,7 +40,19 @@ func main() {
 	}
 	log.Printf("Target User = %s (%d)\n", targetViewer.Viewer.Name, targetViewer.Viewer.ID)
 
-	targetEntries, err := fetchAllEntries(ctx, targetClient, targetViewer.Viewer.ID)
+	if err = doLoop(ctx, cfg, sourceClient, targetClient, sourceViewer.Viewer.ID, targetViewer.Viewer.ID); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func doLoop(ctx context.Context, cfg *config, sourceClient, targetClient *graphql.Client, sourceUserID, targetUserID int) error {
+	sourceEntries, err := fetchAllEntries(ctx, sourceClient, sourceUserID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Source User has %d entries\n", len(sourceEntries))
+
+	targetEntries, err := fetchAllEntries(ctx, targetClient, targetUserID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,6 +61,15 @@ func main() {
 	if err = update(ctx, sourceEntries, targetEntries, targetClient); err != nil {
 		log.Fatal(err)
 	}
+
+	if cfg.IntervalMinutes == 0 {
+		return nil
+	}
+
+	duration := time.Duration(cfg.IntervalMinutes) * time.Minute
+	log.Printf("Sleep %v", duration)
+	time.Sleep(duration)
+	return doLoop(ctx, cfg, sourceClient, targetClient, sourceUserID, targetUserID)
 }
 
 // Source と Target の差分を探して更新する
