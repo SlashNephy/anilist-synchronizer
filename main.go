@@ -2,64 +2,68 @@ package main
 
 import (
 	"context"
-	"log"
 	"sync"
 	"time"
 
 	"github.com/hasura/go-graphql-client"
+	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )
 
 func main() {
 	ctx := context.Background()
 
+	if err := do(ctx); err != nil {
+		logger.Error("do", zap.Error(err))
+	}
+}
+
+func do(ctx context.Context) error {
 	cfg, err := loadConfig()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	sourceClient, err := getGraphQLClient(ctx, cfg, "token-source.json")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	sourceViewer, err := fetchViewer(ctx, sourceClient)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	log.Printf("Source User = %s (%d)\n", sourceViewer.Viewer.Name, sourceViewer.Viewer.ID)
+	logger.Info("source user", zap.String("name", sourceViewer.Viewer.Name), zap.Int("id", sourceViewer.Viewer.ID))
 
 	targetClient, err := getGraphQLClient(ctx, cfg, "token-target.json")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	targetViewer, err := fetchViewer(ctx, targetClient)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	log.Printf("Target User = %s (%d)\n", targetViewer.Viewer.Name, targetViewer.Viewer.ID)
+	logger.Info("target user", zap.String("name", targetViewer.Viewer.Name), zap.Int("id", targetViewer.Viewer.ID))
 
-	if err = doLoop(ctx, cfg, sourceClient, targetClient, sourceViewer.Viewer.ID, targetViewer.Viewer.ID); err != nil {
-		log.Fatal(err)
-	}
+	return doLoop(ctx, cfg, sourceClient, targetClient, sourceViewer.Viewer.ID, targetViewer.Viewer.ID)
 }
 
 func doLoop(ctx context.Context, cfg *config, sourceClient, targetClient *graphql.Client, sourceUserID, targetUserID int) error {
 	sourceEntries, err := fetchAllEntries(ctx, sourceClient, sourceUserID)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	log.Printf("Source User has %d entries\n", len(sourceEntries))
+	logger.Info("source entries", zap.Int("len", len(sourceEntries)))
 
 	targetEntries, err := fetchAllEntries(ctx, targetClient, targetUserID)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	log.Printf("Target User has %d entries\n", len(targetEntries))
+	logger.Info("target entries", zap.Int("len", len(targetEntries)))
 
 	if err = update(ctx, sourceEntries, targetEntries, targetClient); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if cfg.IntervalMinutes == 0 {
@@ -67,7 +71,7 @@ func doLoop(ctx context.Context, cfg *config, sourceClient, targetClient *graphq
 	}
 
 	duration := time.Duration(cfg.IntervalMinutes) * time.Minute
-	log.Printf("Sleep %v", duration)
+	logger.Info("sleep", zap.String("duration", duration.String()))
 	time.Sleep(duration)
 	return doLoop(ctx, cfg, sourceClient, targetClient, sourceUserID, targetUserID)
 }
@@ -81,15 +85,15 @@ func update(ctx context.Context, source []libraryEntry, target []libraryEntry, t
 				var update = false
 				if se.Status != te.Status {
 					update = true
-					log.Printf("Found diff in status: %s (%s -> %s)\n", se.Media.Title.Native, se.Status, te.Status)
+					logger.Info("found diff in status", zap.String("title", se.Media.Title.Native), zap.String("old_status", string(se.Status)), zap.String("new_status", string(te.Status)))
 				}
 				if se.Progress != te.Progress {
 					update = true
-					log.Printf("Found diff in progress: %s (%d -> %d)\n", se.Media.Title.Native, se.Progress, te.Progress)
+					logger.Info("found diff in progress", zap.String("title", se.Media.Title.Native), zap.Int("old_progress", se.Progress), zap.Int("new_progress", te.Progress))
 				}
 				if se.Score != te.Score {
 					update = true
-					log.Printf("Found diff in score: %s (%f -> %f)\n", se.Media.Title.Native, se.Score, te.Score)
+					logger.Info("found diff in score", zap.String("title", se.Media.Title.Native), zap.Float32("old_score", se.Score), zap.Float32("new_score", te.Score))
 				}
 
 				if !update {
@@ -100,7 +104,7 @@ func update(ctx context.Context, source []libraryEntry, target []libraryEntry, t
 					return err
 				}
 
-				log.Printf("Updated: %s\n", se.Media.Title.Native)
+				logger.Info("updated", zap.String("title", se.Media.Title.Native))
 				time.Sleep(300 * time.Millisecond)
 			}
 		}
