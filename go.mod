@@ -8,7 +8,7 @@ require (
 	github.com/hasura/go-graphql-client v0.10.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/gommon v0.4.0
-	go.uber.org/zap v1.25.0
+	go.uber.org/zap v1.26.0
 	golang.org/x/oauth2 v0.12.0
 	golang.org/x/sync v0.3.0
 )
