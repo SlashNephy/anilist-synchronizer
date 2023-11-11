@@ -7,7 +7,7 @@ require (
 	github.com/goccy/go-json v0.10.2
 	github.com/hasura/go-graphql-client v0.10.0
 	github.com/joho/godotenv v1.5.1
-	github.com/labstack/gommon v0.4.0
+	github.com/labstack/gommon v0.4.1
 	go.uber.org/zap v1.26.0
 	golang.org/x/oauth2 v0.14.0
 	golang.org/x/sync v0.5.0
