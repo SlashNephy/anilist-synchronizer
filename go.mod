@@ -3,6 +3,7 @@ module github.com/SlashNephy/anilist-synchronizer
 go 1.19
 
 require (
+	github.com/caarlos0/env/v10 v10.0.0
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/goccy/go-json v0.10.2
 	github.com/hasura/go-graphql-client v0.10.0
