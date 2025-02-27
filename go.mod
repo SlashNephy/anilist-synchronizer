@@ -7,7 +7,7 @@ toolchain go1.24.0
 require (
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/goccy/go-json v0.10.5
-	github.com/hasura/go-graphql-client v0.10.0
+	github.com/hasura/go-graphql-client v0.10.2
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/gommon v0.4.2
 	go.uber.org/zap v1.27.0
