@@ -12,7 +12,7 @@ require (
 	github.com/labstack/gommon v0.4.2
 	go.uber.org/zap v1.27.0
 	golang.org/x/oauth2 v0.29.0
-	golang.org/x/sync v0.12.0
+	golang.org/x/sync v0.13.0
 )
 
 require (
