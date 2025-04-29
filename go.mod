@@ -7,7 +7,7 @@ toolchain go1.24.2
 require (
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/goccy/go-json v0.10.5
-	github.com/hasura/go-graphql-client v0.13.1
+	github.com/hasura/go-graphql-client v0.14.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/gommon v0.4.2
 	go.uber.org/zap v1.27.0
@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	github.com/coder/websocket v1.8.12 // indirect
+	github.com/coder/websocket v1.8.13 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 )
