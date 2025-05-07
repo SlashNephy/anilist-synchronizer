@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.24.2
 
 require (
-	github.com/caarlos0/env/v6 v6.10.1
+	github.com/caarlos0/env/v11 v11.3.1
 	github.com/goccy/go-json v0.10.5
 	github.com/hasura/go-graphql-client v0.14.0
 	github.com/joho/godotenv v1.5.1
