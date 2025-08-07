@@ -2,7 +2,7 @@ module github.com/SlashNephy/anilist-synchronizer
 
 go 1.23.0
 
-toolchain go1.24.5
+toolchain go1.24.6
 
 require (
 	github.com/caarlos0/env/v6 v6.10.1
