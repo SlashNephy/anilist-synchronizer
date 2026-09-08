@@ -1,6 +1,6 @@
 module github.com/SlashNephy/anilist-synchronizer
 
-go 1.25.0
+go 1.26.0
 
 toolchain go1.26.5
 
@@ -12,7 +12,7 @@ require (
 	github.com/labstack/gommon v0.5.0
 	go.uber.org/zap v1.28.0
 	golang.org/x/oauth2 v0.36.0
-	golang.org/x/sync v0.22.0
+	golang.org/x/sync v0.23.0
 )
 
 require (
